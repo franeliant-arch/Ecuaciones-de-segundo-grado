@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ecuaciones de Segundo Grado – Lic. Mariela Delgado</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1b2a;
+    --midnight: #0a1628;
+    --teal: #0abfbc;
+    --gold: #f5c842;
+    --rose: #e05fa1;
+    --cream: #f4ede4;
+    --glass: rgba(255,255,255,0.06);
+    --border: rgba(255,255,255,0.1);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--midnight);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 15% 10%, rgba(10,191,188,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 85% 80%, rgba(245,200,66,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 50% at 50% 50%, rgba(224,95,161,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+    animation: bgshift 12s ease-in-out infinite alternate;
+  }
+  @keyframes bgshift {
+    from { opacity: 0.7; }
+    to { opacity: 1; }
+  }
+
+  /* HEADER */
+  header {
+    position: relative; z-index: 10;
+    text-align: center;
+    padding: 3.5rem 2rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,22,40,0.85);
+    backdrop-filter: blur(20px);
+  }
+  .badge {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--teal), var(--gold));
+    color: var(--navy);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.3rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 1.2rem;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    line-height: 1.15;
+    background: linear-gradient(135deg, #fff 30%, var(--teal) 70%, var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.6rem;
+  }
+  header p.subtitle {
+    color: rgba(244,237,228,0.55);
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+  }
+  header p.subtitle span { color: var(--gold); }
+
+  /* TABS */
+  .tabs {
+    position: relative; z-index: 10;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    padding: 1.6rem 2rem;
+    background: rgba(10,22,40,0.7);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .tab-btn {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    color: rgba(244,237,228,0.6);
+    padding: 0.55rem 1.4rem;
+    border-radius: 100px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.25s;
+    letter-spacing: 0.02em;
+  }
+  .tab-btn:hover { color: var(--cream); border-color: var(--teal); }
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--teal), #0899a0);
+    color: var(--navy);
+    border-color: transparent;
+    font-weight: 600;
+    box-shadow: 0 4px 18px rgba(10,191,188,0.35);
+  }
+
+  /* CONTENT */
+  main {
+    position: relative; z-index: 5;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+  .tab-content { display: none; animation: fadein 0.35s ease; }
+  .tab-content.active { display: block; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* CARDS */
+  .card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 2rem;
+    margin-bottom: 1.8rem;
+    backdrop-filter: blur(8px);
+    transition: border-color 0.25s, transform 0.2s;
+  }
+  .card:hover { border-color: rgba(10,191,188,0.35); transform: translateY(-2px); }
+
+  .card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.45rem;
+    margin-bottom: 0.9rem;
+    color: var(--teal);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .card p { line-height: 1.75; color: rgba(244,237,228,0.8); font-size: 0.97rem; margin-bottom: 0.9rem; }
+  .card p:last-child { margin-bottom: 0; }
+
+  /* Formula box */
+  .formula {
+    background: rgba(10,191,188,0.08);
+    border: 1px solid rgba(10,191,188,0.3);
+    border-left: 4px solid var(--teal);
+    border-radius: 10px;
+    padding: 1.1rem 1.4rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.05rem;
+    color: var(--teal);
+    margin: 1rem 0;
+    text-align: center;
+    letter-spacing: 0.03em;
+  }
+
+  /* Highlight tags */
+  .hl { color: var(--gold); font-weight: 600; }
+  .hl-rose { color: var(--rose); font-weight: 600; }
+  .hl-teal { color: var(--teal); font-weight: 600; }
+
+  /* CASES grid */
+  .cases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.2rem;
+    margin-top: 1rem;
+  }
+  .case-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.4rem;
+    transition: all 0.25s;
+  }
+  .case-card:hover { border-color: var(--gold); background: rgba(245,200,66,0.06); }
+  .case-card h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 0.7rem; }
+  .case-card .disc { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .case-card p { font-size: 0.88rem; color: rgba(244,237,228,0.65); line-height: 1.6; }
+
+  /* EXAMPLES */
+  .example {
+    background: rgba(224,95,161,0.06);
+    border: 1px solid rgba(224,95,161,0.25);
+    border-radius: 14px;
+    padding: 1.6rem;
+    margin: 1.2rem 0;
+  }
+  .example h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--rose);
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .step {
+    display: flex; gap: 1rem; margin: 0.7rem 0; align-items: flex-start;
+  }
+  .step-num {
+    min-width: 26px; height: 26px;
+    background: var(--rose);
+    color: var(--midnight);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .step-text { font-size: 0.93rem; color: rgba(244,237,228,0.8); line-height: 1.7; }
+  .step-mono { font-family: 'JetBrains Mono', monospace; color: var(--cream); font-size: 0.9rem; }
+
+  /* INTERACTIVE CALCULATOR */
+  .calc-section { margin-top: 1rem; }
+  .calc-inputs {
+    display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.4rem;
+  }
+  .input-group { display: flex; flex-direction: column; gap: 0.4rem; flex: 1; min-width: 120px; }
+  .input-group label {
+    font-size: 0.8rem; color: rgba(244,237,228,0.5); letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .input-group input {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--cream);
+    padding: 0.7rem 1rem;
+    border-radius: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .input-group input:focus { border-color: var(--teal); }
+  .calc-eq {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--gold);
+    font-size: 1.15rem;
+    text-align: center;
+    margin-bottom: 1.4rem;
+    min-height: 1.5rem;
+    letter-spacing: 0.05em;
+  }
+  .btn-solve {
+    display: block; width: 100%;
+    background: linear-gradient(135deg, var(--teal), #0899a0);
+    color: var(--navy);
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: none;
+    padding: 0.85rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: box-shadow 0.2s, transform 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-solve:hover { box-shadow: 0 6px 24px rgba(10,191,188,0.4); transform: translateY(-1px); }
+  .calc-result {
+    margin-top: 1.4rem;
+    padding: 1.4rem;
+    background: rgba(10,191,188,0.07);
+    border: 1px solid rgba(10,191,188,0.2);
+    border-radius: 14px;
+    display: none;
+  }
+  .calc-result.show { display: block; animation: fadein 0.3s ease; }
+  .result-line { margin: 0.4rem 0; font-size: 0.92rem; color: rgba(244,237,228,0.8); }
+  .result-highlight { font-family: 'JetBrains Mono', monospace; color: var(--gold); font-size: 1.05rem; font-weight: 700; }
+  .discriminant-badge {
+    display: inline-block;
+    padding: 0.25rem 0.8rem;
+    border-radius: 100px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    margin-left: 0.5rem;
+  }
+  .disc-pos { background: rgba(10,191,188,0.2); color: var(--teal); border: 1px solid var(--teal); }
+  .disc-zero { background: rgba(245,200,66,0.2); color: var(--gold); border: 1px solid var(--gold); }
+  .disc-neg { background: rgba(224,95,161,0.2); color: var(--rose); border: 1px solid var(--rose); }
+
+  /* EXERCISES */
+  .exercise {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.4rem;
+    margin: 1rem 0;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .exercise:hover { border-color: rgba(245,200,66,0.5); }
+  .exercise h4 {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.97rem; color: var(--cream); margin-bottom: 0;
+  }
+  .exercise h4 .arrow {
+    color: var(--gold); font-size: 1.1rem;
+    transition: transform 0.25s;
+  }
+  .exercise.open h4 .arrow { transform: rotate(90deg); }
+  .exercise-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s ease, padding-top 0.3s;
+  }
+  .exercise.open .exercise-body { max-height: 600px; padding-top: 1.2rem; }
+
+  /* PARABOLA SVG */
+  .parabola-container {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    text-align: center;
+    margin-top: 1rem;
+  }
+  #parabolaSvg { max-width: 100%; }
+
+  /* DISCRIMINANT VISUAL */
+  .disc-visual {
+    display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;
+  }
+  .disc-box {
+    flex: 1; min-width: 160px;
+    padding: 1.2rem;
+    border-radius: 14px;
+    text-align: center;
+    border: 1px solid;
+    transition: transform 0.2s;
+  }
+  .disc-box:hover { transform: scale(1.03); }
+  .disc-box.pos { border-color: var(--teal); background: rgba(10,191,188,0.07); }
+  .disc-box.zero { border-color: var(--gold); background: rgba(245,200,66,0.07); }
+  .disc-box.neg { border-color: var(--rose); background: rgba(224,95,161,0.07); }
+  .disc-box .disc-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .disc-box h4 { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+  .disc-box p { font-size: 0.8rem; color: rgba(244,237,228,0.6); margin-top: 0.4rem; line-height: 1.5; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    header { padding: 2.5rem 1.2rem 2rem; }
+    main { padding: 2rem 1rem 3rem; }
+    .card { padding: 1.4rem; }
+  }
+
+  /* Section titles within tabs */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: rgba(244,237,228,0.4);
+    margin: 2rem 0 0.8rem;
+    padding-left: 0.5rem;
+    border-left: 3px solid rgba(10,191,188,0.4);
+  }
+  table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; }
+  th { background: rgba(10,191,188,0.15); color: var(--teal); padding: 0.7rem 1rem; text-align: left; font-size: 0.8rem; letter-spacing: 0.07em; text-transform: uppercase; }
+  td { padding: 0.65rem 1rem; border-top: 1px solid var(--border); color: rgba(244,237,228,0.8); font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; }
+  tr:hover td { background: rgba(255,255,255,0.03); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Matemáticas · Álgebra Intermedia</div>
+  <h1>Ecuaciones de Segundo Grado</h1>
+  <p class="subtitle">Guía Interactiva · <span>Licenciada Mariela Delgado</span></p>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" onclick="showTab('teoria')">📐 Teoría</button>
+  <button class="tab-btn" onclick="showTab('casos')">🔢 Casos del Discriminante</button>
+  <button class="tab-btn" onclick="showTab('ejemplos')">✏️ Ejemplos Resueltos</button>
+  <button class="tab-btn" onclick="showTab('calculadora')">🧮 Calculadora</button>
+  <button class="tab-btn" onclick="showTab('ejercicios')">📝 Ejercicios</button>
+</nav>
+
+<main>
+
+  <!-- TAB: TEORÍA -->
+  <div class="tab-content active" id="tab-teoria">
+    <div class="card">
+      <h2>📌 ¿Qué es una ecuación cuadrática?</h2>
+      <p>Una <span class="hl">ecuación cuadrática</span> (o de segundo grado) es aquella en la que el exponente más alto de la variable es <strong>2</strong>. Su forma general es:</p>
+      <div class="formula">ax² + bx + c = 0</div>
+      <p>donde <span class="hl-teal">a ≠ 0</span>, y los coeficientes <span class="hl">a</span>, <span class="hl">b</span>, <span class="hl">c</span> son números reales. La solución se obtiene con la <strong>fórmula cuadrática (fórmula general)</strong>:</p>
+      <div class="formula">x = (−b ± √(b² − 4ac)) / 2a</div>
+    </div>
+
+    <div class="card">
+      <h2>🔑 Significado de los coeficientes</h2>
+      <table>
+        <tr><th>Coeficiente</th><th>Nombre</th><th>Rol en la ecuación</th></tr>
+        <tr><td>a</td><td>Coef. principal</td><td>Determina la apertura de la parábola. Si a > 0 abre hacia arriba; si a &lt; 0, hacia abajo.</td></tr>
+        <tr><td>b</td><td>Coef. lineal</td><td>Desplaza la parábola horizontalmente. Afecta la posición del vértice.</td></tr>
+        <tr><td>c</td><td>Término independiente</td><td>Es la intersección con el eje Y (cuando x = 0).</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>📊 El Discriminante</h2>
+      <p>La expresión <span class="hl">Δ = b² − 4ac</span> se llama <strong>discriminante</strong> y determina el tipo y cantidad de soluciones:</p>
+      <div class="disc-visual">
+        <div class="disc-box pos">
+          <div class="disc-icon">✅</div>
+          <h4 style="color:var(--teal)">Δ > 0</h4>
+          <p>Dos raíces reales y distintas</p>
+        </div>
+        <div class="disc-box zero">
+          <div class="disc-icon">🟡</div>
+          <h4 style="color:var(--gold)">Δ = 0</h4>
+          <p>Una raíz real doble (dos iguales)</p>
+        </div>
+        <div class="disc-box neg">
+          <div class="disc-icon">❌</div>
+          <h4 style="color:var(--rose)">Δ &lt; 0</h4>
+          <p>Dos raíces complejas (no reales)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📐 Representación gráfica</h2>
+      <p>La gráfica de <span class="hl">y = ax² + bx + c</span> es una <strong>parábola</strong>. El vértice se halla en <span class="hl-teal">x = −b / 2a</span>.</p>
+      <div class="parabola-container">
+        <svg id="parabolaSvg" width="500" height="260" viewBox="-250 -120 500 260">
+          <line x1="-240" y1="0" x2="240" y2="0" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+          <line x1="0" y1="-110" x2="0" y2="130" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+          <text x="245" y="5" fill="rgba(244,237,228,0.4)" font-size="12" font-family="DM Sans">x</text>
+          <text x="5" y="-115" fill="rgba(244,237,228,0.4)" font-size="12" font-family="DM Sans">y</text>
+          <!-- Parábola y = x² - 2x - 3 con a=1, b=-2, c=-3, vértice en (1,-4) -->
+          <path d="M-200,137 Q-100,-83 0,-83 Q100,-83 200,137" fill="none" stroke="none"/>
+          <!-- Calculada punto a punto -->
+          <polyline id="parabPoly" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Vertex marker -->
+          <circle cx="40" cy="-60" r="5" fill="var(--gold)"/>
+          <text x="50" y="-55" fill="var(--gold)" font-size="11" font-family="JetBrains Mono">Vértice</text>
+          <!-- Roots -->
+          <circle cx="-80" cy="0" r="5" fill="var(--rose)"/>
+          <circle cx="160" cy="0" r="5" fill="var(--rose)"/>
+          <text x="-90" y="20" fill="var(--rose)" font-size="11" font-family="JetBrains Mono">x₁</text>
+          <text x="150" y="20" fill="var(--rose)" font-size="11" font-family="JetBrains Mono">x₂</text>
+          <text x="-240" y="-90" fill="rgba(244,237,228,0.5)" font-size="11" font-family="DM Sans">y = x² − 2x − 3</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🔗 Relaciones de Vieta</h2>
+      <p>Si <span class="hl">x₁</span> y <span class="hl">x₂</span> son las raíces, entonces se cumplen estas relaciones:</p>
+      <div class="formula">x₁ + x₂ = −b/a &nbsp;&nbsp;|&nbsp;&nbsp; x₁ · x₂ = c/a</div>
+      <p>Estas propiedades permiten verificar resultados sin sustituir en la ecuación original.</p>
+    </div>
+  </div>
+
+  <!-- TAB: CASOS -->
+  <div class="tab-content" id="tab-casos">
+    <div class="card">
+      <h2>🔢 Variación de coeficientes</h2>
+      <p>Cada valor de <span class="hl">a</span>, <span class="hl">b</span> y <span class="hl">c</span> modifica el comportamiento de la ecuación. Aquí exploramos casos concretos:</p>
+    </div>
+
+    <p class="section-title">Caso A — Coeficiente principal variando (b = 0, c = −4)</p>
+    <div class="cases-grid">
+      <div class="case-card">
+        <h3>a = 1</h3>
+        <div class="disc" style="color:var(--teal)">x² − 4 = 0</div>
+        <p>Δ = 16 → x = ±2<br>Raíces: <strong>2</strong> y <strong>−2</strong></p>
+      </div>
+      <div class="case-card">
+        <h3>a = 2</h3>
+        <div class="disc" style="color:var(--teal)">2x² − 4 = 0</div>
+        <p>Δ = 32 → x = ±√2<br>Raíces: <strong>≈ ±1.414</strong></p>
+      </div>
+      <div class="case-card">
+        <h3>a = −1</h3>
+        <div class="disc" style="color:var(--teal)">−x² − 4 = 0</div>
+        <p>Δ = −16 → Raíces <span class="hl-rose">complejas</span><br>Parábola invertida</p>
+      </div>
+    </div>
+
+    <p class="section-title">Caso B — Coeficiente lineal variando (a = 1, c = −6)</p>
+    <div class="cases-grid">
+      <div class="case-card">
+        <h3>b = 1</h3>
+        <div class="disc" style="color:var(--gold)">x² + x − 6 = 0</div>
+        <p>Δ = 25 → x = (−1 ± 5)/2<br>Raíces: <strong>2</strong> y <strong>−3</strong></p>
+      </div>
+      <div class="case-card">
+        <h3>b = 4</h3>
+        <div class="disc" style="color:var(--gold)">x² + 4x − 6 = 0</div>
+        <p>Δ = 40 → x = (−4 ± √40)/2<br>Raíces: <strong>≈ 1.16</strong> y <strong>≈ −5.16</strong></p>
+      </div>
+      <div class="case-card">
+        <h3>b = 0</h3>
+        <div class="disc" style="color:var(--gold)">x² − 6 = 0</div>
+        <p>Δ = 24 → x = ±√6<br>Raíces: <strong>≈ ±2.449</strong></p>
+      </div>
+    </div>
+
+    <p class="section-title">Caso C — Discriminante controlado</p>
+    <div class="cases-grid">
+      <div class="case-card">
+        <h3>Δ Positivo</h3>
+        <div class="disc" style="color:var(--teal)">x² − 5x + 4 = 0</div>
+        <p>Δ = 25 − 16 = <span style="color:var(--teal)">9 > 0</span><br>Raíces: <strong>4</strong> y <strong>1</strong></p>
+      </div>
+      <div class="case-card">
+        <h3>Δ = Cero</h3>
+        <div class="disc" style="color:var(--gold)">x² − 6x + 9 = 0</div>
+        <p>Δ = 36 − 36 = <span style="color:var(--gold)">0</span><br>Raíz doble: <strong>x = 3</strong></p>
+      </div>
+      <div class="case-card">
+        <h3>Δ Negativo</h3>
+        <div class="disc" style="color:var(--rose)">x² + 2x + 5 = 0</div>
+        <p>Δ = 4 − 20 = <span style="color:var(--rose)">−16 &lt; 0</span><br>Raíces complejas: <strong>−1 ± 2i</strong></p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.8rem">
+      <h2>📋 Tabla comparativa de casos</h2>
+      <table>
+        <tr><th>Ecuación</th><th>a</th><th>b</th><th>c</th><th>Δ</th><th>Raíces</th></tr>
+        <tr><td>x² − 5x + 6 = 0</td><td>1</td><td>−5</td><td>6</td><td style="color:var(--teal)">1</td><td>3 y 2</td></tr>
+        <tr><td>2x² − 4x + 2 = 0</td><td>2</td><td>−4</td><td>2</td><td style="color:var(--gold)">0</td><td>1 (doble)</td></tr>
+        <tr><td>x² + x + 1 = 0</td><td>1</td><td>1</td><td>1</td><td style="color:var(--rose)">−3</td><td>Complejas</td></tr>
+        <tr><td>3x² − 12 = 0</td><td>3</td><td>0</td><td>−12</td><td style="color:var(--teal)">144</td><td>2 y −2</td></tr>
+        <tr><td>x² − 8x + 16 = 0</td><td>1</td><td>−8</td><td>16</td><td style="color:var(--gold)">0</td><td>4 (doble)</td></tr>
+        <tr><td>−x² + 4x − 5 = 0</td><td>−1</td><td>4</td><td>−5</td><td style="color:var(--rose)">−4</td><td>Complejas</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB: EJEMPLOS -->
+  <div class="tab-content" id="tab-ejemplos">
+
+    <p class="section-title">Ejemplo 1 — Dos raíces reales distintas (Δ > 0)</p>
+    <div class="example">
+      <h3>📗 Resolver: x² − 7x + 10 = 0</h3>
+      <p style="color:rgba(244,237,228,0.6); font-size:0.88rem; margin-bottom:1rem;">Coeficientes: a = 1, b = −7, c = 10</p>
+      <div class="step"><div class="step-num">1</div><div class="step-text">Calculamos el discriminante:<br><span class="step-mono">Δ = (−7)² − 4(1)(10) = 49 − 40 = 9</span></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Como Δ = 9 > 0, hay <strong>dos raíces reales distintas</strong>.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">Aplicamos la fórmula:<br><span class="step-mono">x = (7 ± √9) / 2 = (7 ± 3) / 2</span></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text">Calculamos cada raíz:<br><span class="step-mono">x₁ = (7 + 3)/2 = 10/2 = <span class="hl">5</span></span><br><span class="step-mono">x₂ = (7 − 3)/2 = 4/2 = <span class="hl">2</span></span></div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-text">Verificación (Vieta): x₁ + x₂ = 5+2 = 7 = −b/a ✅ &nbsp; x₁ · x₂ = 10 = c/a ✅</div></div>
+    </div>
+
+    <p class="section-title">Ejemplo 2 — Raíz doble (Δ = 0)</p>
+    <div class="example">
+      <h3>📙 Resolver: x² − 10x + 25 = 0</h3>
+      <p style="color:rgba(244,237,228,0.6); font-size:0.88rem; margin-bottom:1rem;">Coeficientes: a = 1, b = −10, c = 25</p>
+      <div class="step"><div class="step-num">1</div><div class="step-text">Calculamos el discriminante:<br><span class="step-mono">Δ = (−10)² − 4(1)(25) = 100 − 100 = 0</span></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Como Δ = 0, hay <strong>una raíz doble</strong>.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">Calculamos:<br><span class="step-mono">x = −b / 2a = 10/2 = <span class="hl">5</span></span></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text">La ecuación factorizada es: <span class="step-mono">(x − 5)² = 0</span></div></div>
+    </div>
+
+    <p class="section-title">Ejemplo 3 — Raíces complejas (Δ &lt; 0)</p>
+    <div class="example">
+      <h3>📕 Resolver: x² + 4x + 13 = 0</h3>
+      <p style="color:rgba(244,237,228,0.6); font-size:0.88rem; margin-bottom:1rem;">Coeficientes: a = 1, b = 4, c = 13</p>
+      <div class="step"><div class="step-num">1</div><div class="step-text">Calculamos el discriminante:<br><span class="step-mono">Δ = 4² − 4(1)(13) = 16 − 52 = −36</span></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Como Δ = −36 &lt; 0, las raíces son <strong class="hl-rose">complejas conjugadas</strong>.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">Calculamos:<br><span class="step-mono">x = (−4 ± √−36) / 2 = (−4 ± 6i) / 2</span></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text">Raíces: <span class="step-mono">x₁ = <span class="hl">−2 + 3i</span></span> &nbsp; <span class="step-mono">x₂ = <span class="hl">−2 − 3i</span></span></div></div>
+    </div>
+
+    <p class="section-title">Ejemplo 4 — Coeficiente principal diferente de 1</p>
+    <div class="example">
+      <h3>📘 Resolver: 3x² − 11x − 4 = 0</h3>
+      <p style="color:rgba(244,237,228,0.6); font-size:0.88rem; margin-bottom:1rem;">Coeficientes: a = 3, b = −11, c = −4</p>
+      <div class="step"><div class="step-num">1</div><div class="step-text">Discriminante:<br><span class="step-mono">Δ = (−11)² − 4(3)(−4) = 121 + 48 = 169</span></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">√169 = 13 → Dos raíces reales distintas.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text"><span class="step-mono">x = (11 ± 13) / 6</span></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text"><span class="step-mono">x₁ = 24/6 = <span class="hl">4</span></span> &nbsp; <span class="step-mono">x₂ = −2/6 = <span class="hl">−1/3</span></span></div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-text">Verificación: 3(4)²−11(4)−4 = 48−44−4 = 0 ✅</div></div>
+    </div>
+
+  </div>
+
+  <!-- TAB: CALCULADORA -->
+  <div class="tab-content" id="tab-calculadora">
+    <div class="card">
+      <h2>🧮 Resuelve tu ecuación</h2>
+      <p>Ingresa los coeficientes de la ecuación <span class="hl">ax² + bx + c = 0</span>:</p>
+      <div class="calc-section">
+        <div class="calc-inputs">
+          <div class="input-group">
+            <label>a (≠ 0)</label>
+            <input type="number" id="coefA" value="1" step="any" oninput="updateEqDisplay()">
+          </div>
+          <div class="input-group">
+            <label>b</label>
+            <input type="number" id="coefB" value="-5" step="any" oninput="updateEqDisplay()">
+          </div>
+          <div class="input-group">
+            <label>c</label>
+            <input type="number" id="coefC" value="6" step="any" oninput="updateEqDisplay()">
+          </div>
+        </div>
+        <div class="calc-eq" id="eqDisplay"></div>
+        <button class="btn-solve" onclick="solveEquation()">▶ Resolver Ecuación</button>
+        <div class="calc-result" id="calcResult"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📊 Ejemplos rápidos</h2>
+      <p>Carga un ejemplo para verlo resuelto:</p>
+      <div style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:0.8rem;">
+        <button class="tab-btn" onclick="loadExample(1,-5,6)">x²−5x+6</button>
+        <button class="tab-btn" onclick="loadExample(2,-4,2)">2x²−4x+2</button>
+        <button class="tab-btn" onclick="loadExample(1,2,5)">x²+2x+5</button>
+        <button class="tab-btn" onclick="loadExample(3,-11,-4)">3x²−11x−4</button>
+        <button class="tab-btn" onclick="loadExample(1,-8,16)">x²−8x+16</button>
+        <button class="tab-btn" onclick="loadExample(-1,4,-5)">−x²+4x−5</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: EJERCICIOS -->
+  <div class="tab-content" id="tab-ejercicios">
+    <div class="card">
+      <h2>📝 Ejercicios con solución paso a paso</h2>
+      <p>Intenta resolver cada ejercicio por tu cuenta antes de ver la solución. Haz clic en cada uno para ver el procedimiento completo.</p>
+    </div>
+
+    <div id="exerciseList"></div>
+  </div>
+
+</main>
+
+<script>
+// ─── TAB SYSTEM ───────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ─── PARABOLA SVG ─────────────────────────────────────────
+function drawParabola(a=1, b=-2, c=-3, svg, scale=15) {
+  let points = [];
+  for (let x = -15; x <= 15; x += 0.5) {
+    let y = a*x*x + b*x + c;
+    points.push(`${x*scale},${-y*scale}`);
+  }
+  svg.setAttribute('points', points.join(' '));
+}
+const poly = document.getElementById('parabPoly');
+if (poly) drawParabola(0.03, -0.06, -0.1, poly, 60);
+
+// ─── EQUATION DISPLAY ─────────────────────────────────────
+function updateEqDisplay() {
+  const a = parseFloat(document.getElementById('coefA').value) || 0;
+  const b = parseFloat(document.getElementById('coefB').value) || 0;
+  const c = parseFloat(document.getElementById('coefC').value) || 0;
+
+  let terms = [];
+  if (a !== 0) terms.push(a === 1 ? 'x²' : a === -1 ? '−x²' : `${a}x²`);
+  if (b !== 0) {
+    if (b === 1) terms.push(terms.length ? '+ x' : 'x');
+    else if (b === -1) terms.push('− x');
+    else if (b > 0) terms.push(terms.length ? `+ ${b}x` : `${b}x`);
+    else terms.push(`− ${Math.abs(b)}x`);
+  }
+  if (c !== 0) {
+    if (c > 0) terms.push(terms.length ? `+ ${c}` : `${c}`);
+    else terms.push(`− ${Math.abs(c)}`);
+  }
+  if (terms.length === 0) terms.push('0');
+  document.getElementById('eqDisplay').textContent = terms.join(' ') + ' = 0';
+}
+updateEqDisplay();
+
+// ─── SOLVER ───────────────────────────────────────────────
+function round(n, d=4) { return Math.round(n * 10**d) / 10**d; }
+
+function solveEquation() {
+  const a = parseFloat(document.getElementById('coefA').value);
+  const b = parseFloat(document.getElementById('coefB').value) || 0;
+  const c = parseFloat(document.getElementById('coefC').value) || 0;
+
+  if (!a || a === 0) { alert('El coeficiente a no puede ser 0.'); return; }
+
+  const disc = b*b - 4*a*c;
+  const result = document.getElementById('calcResult');
+  result.classList.add('show');
+
+  let html = '';
+  html += `<div class="result-line">📐 Ecuación: <span class="result-highlight">${document.getElementById('eqDisplay').textContent}</span></div>`;
+  html += `<div class="result-line" style="margin-top:0.8rem">🔎 Discriminante: <span class="result-highlight">Δ = ${b}² − 4(${a})(${c}) = ${round(disc)}</span>`;
+
+  if (disc > 0) html += `<span class="discriminant-badge disc-pos">Δ > 0</span></div>`;
+  else if (disc === 0) html += `<span class="discriminant-badge disc-zero">Δ = 0</span></div>`;
+  else html += `<span class="discriminant-badge disc-neg">Δ &lt; 0</span></div>`;
+
+  html += `<div class="result-line" style="margin-top:0.6rem">🔢 Tipo de raíces: <strong>`;
+  if (disc > 0) html += 'Dos raíces reales y distintas';
+  else if (disc === 0) html += 'Raíz real doble';
+  else html += 'Dos raíces complejas conjugadas';
+  html += '</strong></div>';
+
+  if (disc >= 0) {
+    const x1 = (-b + Math.sqrt(disc)) / (2*a);
+    const x2 = (-b - Math.sqrt(disc)) / (2*a);
+    if (disc === 0) {
+      html += `<div class="result-line" style="margin-top:0.8rem">✅ Raíz doble: <span class="result-highlight">x = ${round(x1)}</span></div>`;
+    } else {
+      html += `<div class="result-line" style="margin-top:0.8rem">✅ x₁ = <span class="result-highlight">${round(x1)}</span></div>`;
+      html += `<div class="result-line">✅ x₂ = <span class="result-highlight">${round(x2)}</span></div>`;
+    }
+  } else {
+    const real = round(-b / (2*a));
+    const imag = round(Math.sqrt(-disc) / (2*a));
+    html += `<div class="result-line" style="margin-top:0.8rem">🔴 x₁ = <span class="result-highlight">${real} + ${imag}i</span></div>`;
+    html += `<div class="result-line">🔴 x₂ = <span class="result-highlight">${real} − ${imag}i</span></div>`;
+  }
+
+  const vertex_x = round(-b / (2*a));
+  const vertex_y = round(a*vertex_x*vertex_x + b*vertex_x + c);
+  html += `<div class="result-line" style="margin-top:0.8rem">📍 Vértice: <span class="result-highlight">(${vertex_x}, ${vertex_y})</span></div>`;
+  html += `<div class="result-line">📍 Intersección eje Y: <span class="result-highlight">(0, ${c})</span></div>`;
+
+  result.innerHTML = html;
+}
+
+function loadExample(a,b,c) {
+  document.getElementById('coefA').value = a;
+  document.getElementById('coefB').value = b;
+  document.getElementById('coefC').value = c;
+  updateEqDisplay();
+  solveEquation();
+}
+
+// ─── EXERCISES ────────────────────────────────────────────
+const exercises = [
+  {
+    q: "x² − 9x + 20 = 0",
+    a: 1, b: -9, c: 20,
+    steps: [
+      "Identificamos: a = 1, b = −9, c = 20",
+      "Δ = (−9)² − 4(1)(20) = 81 − 80 = 1",
+      "√Δ = 1 → Dos raíces reales distintas",
+      "x = (9 ± 1) / 2",
+      "x₁ = 10/2 = 5 &nbsp;|&nbsp; x₂ = 8/2 = 4",
+      "Verificación: (x−5)(x−4) = x²−9x+20 ✅"
+    ]
+  },
+  {
+    q: "2x² + 7x − 15 = 0",
+    a: 2, b: 7, c: -15,
+    steps: [
+      "a = 2, b = 7, c = −15",
+      "Δ = 49 − 4(2)(−15) = 49 + 120 = 169",
+      "√169 = 13 → Dos raíces distintas",
+      "x = (−7 ± 13) / 4",
+      "x₁ = 6/4 = 3/2 = 1.5 &nbsp;|&nbsp; x₂ = −20/4 = −5",
+      "Verificación: suma = −3.5 = −b/a ✅, producto = −7.5 = c/a ✅"
+    ]
+  },
+  {
+    q: "x² + 6x + 9 = 0",
+    a: 1, b: 6, c: 9,
+    steps: [
+      "a = 1, b = 6, c = 9",
+      "Δ = 36 − 36 = 0 → Raíz doble",
+      "x = −6 / 2 = −3",
+      "Factorización: (x + 3)² = 0",
+      "Raíz doble: x = −3"
+    ]
+  },
+  {
+    q: "4x² − 4x + 1 = 0",
+    a: 4, b: -4, c: 1,
+    steps: [
+      "a = 4, b = −4, c = 1",
+      "Δ = 16 − 16 = 0 → Raíz doble",
+      "x = 4 / 8 = 1/2",
+      "Factorización: (2x − 1)² = 0",
+      "Raíz doble: x = 0.5"
+    ]
+  },
+  {
+    q: "x² − 4x + 8 = 0",
+    a: 1, b: -4, c: 8,
+    steps: [
+      "a = 1, b = −4, c = 8",
+      "Δ = 16 − 32 = −16 < 0 → Raíces complejas",
+      "x = (4 ± √−16) / 2 = (4 ± 4i) / 2",
+      "x₁ = 2 + 2i &nbsp;|&nbsp; x₂ = 2 − 2i",
+      "Suma: x₁+x₂ = 4 = −b/a ✅ &nbsp; Producto: x₁·x₂ = 8 = c/a ✅"
+    ]
+  },
+  {
+    q: "3x² − 6x − 24 = 0",
+    a: 3, b: -6, c: -24,
+    steps: [
+      "Simplificamos dividiendo entre 3: x² − 2x − 8 = 0",
+      "Δ = 4 + 32 = 36",
+      "√36 = 6 → Dos raíces reales distintas",
+      "x = (2 ± 6) / 2",
+      "x₁ = 8/2 = 4 &nbsp;|&nbsp; x₂ = −4/2 = −2",
+      "Verificación: 3(4)²−6(4)−24 = 48−24−24 = 0 ✅"
+    ]
+  },
+];
+
+function buildExercises() {
+  const container = document.getElementById('exerciseList');
+  exercises.forEach((ex, i) => {
+    const div = document.createElement('div');
+    div.className = 'exercise';
+    div.innerHTML = `
+      <h4>
+        <span>📌 Ejercicio ${i+1}: <span style="font-family:'JetBrains Mono',monospace;color:var(--gold)">${ex.q}</span></span>
+        <span class="arrow">▶</span>
+      </h4>
+      <div class="exercise-body">
+        ${ex.steps.map((s,j) => `<div class="step"><div class="step-num" style="background:var(--gold);color:var(--navy)">${j+1}</div><div class="step-text step-mono">${s}</div></div>`).join('')}
+      </div>
+    `;
+    div.onclick = () => div.classList.toggle('open');
+    container.appendChild(div);
+  });
+}
+buildExercises();
+</script>
+</body>
+</html>
